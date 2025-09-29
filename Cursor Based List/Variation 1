@@ -1,1 +1,126 @@
+//Variation 1 Cursor Based List
 
+#include <stdio.h>
+#define MAX 4
+
+typedef struct {
+    int elem;
+    int next;
+} Cell, HeapSpace[MAX];
+
+typedef struct {
+    HeapSpace H;  // virtual heap
+    int avail;    // index of first available cell
+} VHeap;
+
+typedef int List; // list represented by index to virtual heap
+
+// ==== FUNCTION DECLARATIONS ====
+void initialize(VHeap *V);
+int allocSpace(VHeap *V);
+void deallocSpace(VHeap *V, int index);
+void insertFirst(List *L, VHeap *V, int elem);
+void insertLast(List *L, VHeap *V, int elem);
+void deleteElem(List *L, VHeap *V, int elem);
+void display(List L, VHeap V);
+
+// ==== FUNCTION IMPLEMENTATIONS ====
+void initialize(VHeap *V) {
+    int i;
+    for (i = 0; i < MAX - 1; i++) {
+        V->H[i].next = i + 1;
+    }
+    V->H[MAX - 1].next = -1;
+    V->avail = 0;
+}
+
+int allocSpace(VHeap *V) {
+    int index = V->avail;
+    if (index != -1) {
+        V->avail = V->H[index].next;
+    }
+    return index;
+}
+
+void deallocSpace(VHeap *V, int index) {
+    V->H[index].next = V->avail;
+    V->avail = index;
+}
+
+void insertFirst(List *L, VHeap *V, int elem) {
+    int newNode = allocSpace(V);
+    if (newNode != -1) {
+        V->H[newNode].elem = elem;
+        V->H[newNode].next = *L;
+        *L = newNode;
+    } else {
+        printf("Heap is full. Cannot insert %d\n", elem);
+    }
+}
+
+void insertLast(List *L, VHeap *V, int elem) {
+    int newNode = allocSpace(V);
+    if (newNode != -1) {
+        V->H[newNode].elem = elem;
+        V->H[newNode].next = -1;
+
+        if (*L == -1) {
+            *L = newNode;
+        } else {
+            int temp = *L;
+            while (V->H[temp].next != -1) {
+                temp = V->H[temp].next;
+            }
+            V->H[temp].next = newNode;
+        }
+    } else {
+        printf("Heap is full. Cannot insert %d\n", elem);
+    }
+}
+
+void deleteElem(List *L, VHeap *V, int elem) {
+    int *trav = L;
+
+    while (*trav != -1 && V->H[*trav].elem != elem) {
+        trav = &V->H[*trav].next;
+    }
+
+    if (*trav != -1) {
+        int delNode = *trav;
+        *trav = V->H[delNode].next;
+        deallocSpace(V, delNode);
+    } else {
+        printf("Element %d not found!\n", elem);
+    }
+}
+
+void display(List L, VHeap V) {
+    printf("List: ");
+    while (L != -1) {
+        printf("%d -> ", V.H[L].elem);
+        L = V.H[L].next;
+    }
+    printf("NULL\n");
+}
+
+// ==== MAIN ====
+int main() {
+    VHeap V;
+    List L = -1;
+
+    initialize(&V);
+
+    insertFirst(&L, &V, 10);
+    insertFirst(&L, &V, 20);
+    insertLast(&L, &V, 30);
+    insertLast(&L, &V, 40);
+
+    display(L, V);
+
+    deleteElem(&L, &V, 30);
+    display(L, V);
+
+    deleteElem(&L, &V, 99); // not found
+
+    return 0;
+}
