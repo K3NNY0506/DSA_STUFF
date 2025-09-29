@@ -1,6 +1,4 @@
-//DSA STUFF
-
-//Array Queue Variation 1
+Variation 1
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,34 +6,40 @@
 
 #define MAX 10
 
+// List holds the array and the count
 typedef struct {
     int items[MAX];
+    int count;
+} List;
+
+// Queue has a List plus front and rear
+typedef struct {
+    List list;
     int front;
     int rear;
-    int count;
 } Queue;
 
-// Function to initialize the queue
+// Initialize queue
 Queue* initialize() {
     Queue* q = (Queue*) malloc(sizeof(Queue));
     if (!q) {
         printf("Memory allocation failed!\n");
         exit(1);
     }
+    q->list.count = 0;
     q->front = -1;
     q->rear = -1;
-    q->count = 0;
     return q;
 }
 
-// Check if queue is full
+// Check if full
 bool isFull(Queue* q) {
-    return q->count == MAX;
+    return q->list.count == MAX;
 }
 
-// Check if queue is empty
+// Check if empty
 bool isEmpty(Queue* q) {
-    return q->count == 0;
+    return q->list.count == 0;
 }
 
 // Enqueue operation
@@ -50,8 +54,8 @@ void enqueue(Queue* q, int value) {
     } else {
         q->rear = (q->rear + 1) % MAX;
     }
-    q->items[q->rear] = value;
-    q->count++;
+    q->list.items[q->rear] = value;
+    q->list.count++;
     printf("Enqueued: %d\n", value);
 }
 
@@ -61,28 +65,28 @@ int dequeue(Queue* q) {
         printf("Queue is EMPTY! Cannot dequeue.\n");
         return -1;
     }
-    int value = q->items[q->front];
-    if (q->count == 1) { // Last element
+    int value = q->list.items[q->front];
+    if (q->list.count == 1) { // removing last element
         q->front = -1;
         q->rear = -1;
     } else {
         q->front = (q->front + 1) % MAX;
     }
-    q->count--;
+    q->list.count--;
     printf("Dequeued: %d\n", value);
     return value;
 }
 
 // Get front element
-int front(Queue* q) {
+int frontElement(Queue* q) {
     if (isEmpty(q)) {
         printf("Queue is EMPTY! No front element.\n");
         return -1;
     }
-    return q->items[q->front];
+    return q->list.items[q->front];
 }
 
-// Display queue elements
+// Display queue contents
 void display(Queue* q) {
     if (isEmpty(q)) {
         printf("Queue is EMPTY!\n");
@@ -90,14 +94,14 @@ void display(Queue* q) {
     }
     printf("Queue contents: ");
     int i = q->front;
-    for (int j = 0; j < q->count; j++) {
-        printf("%d ", q->items[i]);
+    for (int j = 0; j < q->list.count; j++) {
+        printf("%d ", q->list.items[i]);
         i = (i + 1) % MAX;
     }
     printf("\n");
 }
 
-// Example main
+// Example usage
 int main() {
     Queue* q = initialize();
 
@@ -114,7 +118,7 @@ int main() {
     enqueue(q, 4);
     display(q);
 
-    printf("Front element: %d\n", front(q));
+    printf("Front element: %d\n", frontElement(q));
 
     return 0;
 }
