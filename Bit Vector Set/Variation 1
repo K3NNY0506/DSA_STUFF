@@ -1,1 +1,78 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+void initialize(unsigned char *set) {
+    *set = 0; // clear all bits
+}
+
+void insert(unsigned char *set, int element) {
+    if (element < 0 || element > 7) return; // only 0–7 for 8 bits
+    *set |= (1 << element);
+}
+
+void delete(unsigned char *set, int element) {
+    if (element < 0 || element > 7) return;
+    *set &= ~(1 << element);
+}
+
+bool find(unsigned char set, int element) {
+    if (element < 0 || element > 7) return false;
+    return (set & (1 << element)) != 0;
+}
+
+unsigned char set_union(unsigned char A, unsigned char B) {
+    return A | B;
+}
+
+unsigned char set_intersection(unsigned char A, unsigned char B) {
+    return A & B;
+}
+
+unsigned char set_difference(unsigned char A, unsigned char B) {
+    return A & ~B;
+}
+
+void display(unsigned char set) {
+    printf("{ ");
+    for (int i = 0; i < 8; i++) {
+        if (set & (1 << i)) {
+            printf("%d ", i);
+        }
+    }
+    printf("}\n");
+}
+
+int main() {
+    unsigned char A, B, C;
+
+    initialize(&A);
+    initialize(&B);
+
+    // Insert elements
+    insert(&A, 1);
+    insert(&A, 6);
+    insert(&B, 3);
+    insert(&B, 6);
+    insert(&B, 7);
+
+    printf("Set A = ");
+    display(A);
+
+    printf("Set B = ");
+    display(B);
+
+    C = set_union(A, B);
+    printf("Union (A ∪ B) = ");
+    display(C);
+
+    C = set_intersection(A, B);
+    printf("Intersection (A ∩ B) = ");
+    display(C);
+
+    C = set_difference(A, B);
+    printf("Difference (A - B) = ");
+    display(C);
+
+    return 0;
+}
 
