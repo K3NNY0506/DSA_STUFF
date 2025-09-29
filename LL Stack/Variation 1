@@ -1,1 +1,118 @@
+//LL Stack
 
+//Var 1 
+
+// Online C compiler to run C program online
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct Node{
+    int data;
+    struct Node * next;
+}Node;
+
+typedef struct Stack{
+    Node * top;    
+}Stack;
+
+Stack* initialize() {
+    Stack* createdStack = malloc(sizeof(Stack));
+    if (createdStack == NULL) {
+        printf("Memory allocation failed!\n");
+        exit(1);
+    }
+    createdStack->top = NULL;
+    return createdStack;
+}
+
+
+bool isFull(Stack* s) {
+    return false;
+}
+
+bool isEmpty(Stack* s) {
+    return (s->top == NULL);
+}
+
+
+void push(Stack* s, int value) {
+    Node* newNode = malloc(sizeof(Node));
+    if (newNode == NULL) {
+        printf("Memory allocation failed!\n");
+        return;
+    }
+    newNode->data = value;
+    newNode->next = s->top; 
+    s->top = newNode;       
+}
+int pop(Stack* s) {
+    if (isEmpty(s)) {
+        printf("Stack underflow!\n");
+        return -1; // sentinel value
+    }
+    Node* temp = s->top;
+    int value = temp->data;
+    s->top = temp->next;
+    free(temp);
+    return value;
+}
+
+int peek(Stack* s) {
+    if (isEmpty(s)) {
+        printf("Stack is empty!\n");
+        return -1;
+    }
+    return s->top->data;
+}
+
+void display(Stack* s) {
+    if (isEmpty(s)) {
+        printf("Stack is empty!\n");
+        return;
+    }
+    Node* curr = s->top;
+    while (curr != NULL) {
+        printf("%d -> ", curr->data);
+        curr = curr->next;
+    }
+    printf("NULL\n");
+}
+
+
+
+int main() {
+    // Create 3 independent stacks
+    Stack* s1 = initialize();
+    Stack* s2 = initialize();
+    Stack* s3 = initialize();
+
+    // Use stack 1
+    push(s1, 10);
+    push(s1, 20);
+    push(s1, 30);
+
+    // Use stack 2
+    push(s2, 100);
+    push(s2, 200);
+
+    // Use stack 3
+    push(s3, 1000);
+
+    // Display all stacks
+    printf("Stack 1: ");
+    display(s1);
+
+    printf("Stack 2: ");
+    display(s2);
+
+    printf("Stack 3: ");
+    display(s3);
+
+    // Example pops
+    printf("Pop from Stack 1: %d\n", pop(s1));
+    printf("Stack 1 after pop: ");
+    display(s1);
+
+    return 0;
+}
