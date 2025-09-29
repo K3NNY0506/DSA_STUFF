@@ -1,1 +1,120 @@
+//DSA STUFF
 
+//Array Queue Variation 1
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define MAX 10
+
+typedef struct {
+    int items[MAX];
+    int front;
+    int rear;
+    int count;
+} Queue;
+
+// Function to initialize the queue
+Queue* initialize() {
+    Queue* q = (Queue*) malloc(sizeof(Queue));
+    if (!q) {
+        printf("Memory allocation failed!\n");
+        exit(1);
+    }
+    q->front = -1;
+    q->rear = -1;
+    q->count = 0;
+    return q;
+}
+
+// Check if queue is full
+bool isFull(Queue* q) {
+    return q->count == MAX;
+}
+
+// Check if queue is empty
+bool isEmpty(Queue* q) {
+    return q->count == 0;
+}
+
+// Enqueue operation
+void enqueue(Queue* q, int value) {
+    if (isFull(q)) {
+        printf("Queue is FULL! Cannot enqueue %d\n", value);
+        return;
+    }
+    if (isEmpty(q)) {
+        q->front = 0;
+        q->rear = 0;
+    } else {
+        q->rear = (q->rear + 1) % MAX;
+    }
+    q->items[q->rear] = value;
+    q->count++;
+    printf("Enqueued: %d\n", value);
+}
+
+// Dequeue operation
+int dequeue(Queue* q) {
+    if (isEmpty(q)) {
+        printf("Queue is EMPTY! Cannot dequeue.\n");
+        return -1;
+    }
+    int value = q->items[q->front];
+    if (q->count == 1) { // Last element
+        q->front = -1;
+        q->rear = -1;
+    } else {
+        q->front = (q->front + 1) % MAX;
+    }
+    q->count--;
+    printf("Dequeued: %d\n", value);
+    return value;
+}
+
+// Get front element
+int front(Queue* q) {
+    if (isEmpty(q)) {
+        printf("Queue is EMPTY! No front element.\n");
+        return -1;
+    }
+    return q->items[q->front];
+}
+
+// Display queue elements
+void display(Queue* q) {
+    if (isEmpty(q)) {
+        printf("Queue is EMPTY!\n");
+        return;
+    }
+    printf("Queue contents: ");
+    int i = q->front;
+    for (int j = 0; j < q->count; j++) {
+        printf("%d ", q->items[i]);
+        i = (i + 1) % MAX;
+    }
+    printf("\n");
+}
+
+// Example main
+int main() {
+    Queue* q = initialize();
+
+    enqueue(q, 1);
+    enqueue(q, 3);
+    enqueue(q, 2);
+    enqueue(q, 5);
+
+    display(q);
+
+    dequeue(q);
+    display(q);
+
+    enqueue(q, 4);
+    display(q);
+
+    printf("Front element: %d\n", front(q));
+
+    return 0;
+}
