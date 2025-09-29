@@ -1,1 +1,97 @@
+//LL Queue 
+//Var 1
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct {
+    Node* front;
+    Node* rear;
+} Queue;
+
+// Initialize queue
+Queue* initialize() {
+    Queue* q = (Queue*) malloc(sizeof(Queue));
+    q->front = q->rear = NULL;
+    return q;
+}
+
+// Check if queue is empty
+bool isEmpty(Queue* q) {
+    return q->front == NULL;
+}
+
+// Enqueue
+void enqueue(Queue* q, int value) {
+    Node* newNode = (Node*) malloc(sizeof(Node));
+    newNode->data = value;
+    newNode->next = NULL;
+
+    if (isEmpty(q)) {
+        q->front = q->rear = newNode;
+    } else {
+        q->rear->next = newNode;
+        q->rear = newNode;
+    }
+}
+
+// Dequeue
+int dequeue(Queue* q) {
+    if (isEmpty(q)) {
+        printf("Queue is empty!\n");
+        return -1;
+    }
+
+    Node* temp = q->front;
+    int value = temp->data;
+    q->front = q->front->next;
+
+    if (q->front == NULL) {
+        q->rear = NULL; // queue became empty
+    }
+
+    free(temp);
+    return value;
+}
+
+// Peek front element
+int front(Queue* q) {
+    if (isEmpty(q)) {
+        printf("Queue is empty!\n");
+        return -1;
+    }
+    return q->front->data;
+}
+
+// Display
+void display(Queue* q) {
+    Node* temp = q->front;
+    while (temp != NULL) {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    Queue* q = initialize();
+
+    enqueue(q, 1);
+    enqueue(q, 3);
+    enqueue(q, 5);
+    display(q);
+
+    enqueue(q, 4);
+    display(q);
+
+    printf("Dequeued: %d\n", dequeue(q));
+    display(q);
+
+    return 0;
+}
