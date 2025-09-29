@@ -1,7 +1,8 @@
-//Variation 1 Cursor Based List
+// Variation 1 Cursor Based List
 
 #include <stdio.h>
-#define MAX 4
+#define MAX 10
+
 
 typedef struct {
     int elem;
@@ -22,6 +23,8 @@ void deallocSpace(VHeap *V, int index);
 void insertFirst(List *L, VHeap *V, int elem);
 void insertLast(List *L, VHeap *V, int elem);
 void deleteElem(List *L, VHeap *V, int elem);
+void deleteAllOccurrence(List *L, VHeap *V, int elem);
+void insertSorted(List *L, VHeap *V, int elem);
 void display(List L, VHeap V);
 
 // ==== FUNCTION IMPLEMENTATIONS ====
@@ -103,6 +106,36 @@ void display(List L, VHeap V) {
     printf("NULL\n");
 }
 
+void insertSorted(List *L, VHeap *V, int elem) {
+    int *trav = L;
+    while (*trav != -1 && V->H[*trav].elem < elem) {
+        trav = &V->H[*trav].next;
+    }
+
+    int newNode = allocSpace(V);
+    if (newNode != -1) {
+        V->H[newNode].elem = elem;
+        V->H[newNode].next = *trav;
+        *trav = newNode;
+    } else {
+        printf("Heap is full. Cannot insert %d\n", elem);
+    }
+}
+
+void deleteAllOccurrence(List *L, VHeap *V, int elem) {
+    int *trav = L;
+
+    while (*trav != -1) {
+        if (V->H[*trav].elem == elem) {
+            int delNode = *trav;
+            *trav = V->H[delNode].next;
+            deallocSpace(V, delNode);
+        } else {
+            trav = &V->H[*trav].next;
+        }
+    }
+}
+
 // ==== MAIN ====
 int main() {
     VHeap V;
@@ -121,6 +154,16 @@ int main() {
     display(L, V);
 
     deleteElem(&L, &V, 99); // not found
+    display(L, V);
+    insertSorted(&L, &V, 25);
+    insertSorted(&L, &V, 5);
+    insertSorted(&L, &V, 35);
+    display(L, V);
+    
+    deleteAllOccurrence(&L, &V, 20);
+    display(L, V);
+    
+    deleteAllOccurrence(&L, &V, 99);
 
     return 0;
 }
